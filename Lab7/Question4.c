@@ -1,6 +1,7 @@
 #include <stdio.h>
 
-void main() {
+int main()
+{
     int length, i;
     printf("Array size: ");
     scanf("%d", &length);

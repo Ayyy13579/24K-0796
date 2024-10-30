@@ -1,6 +1,7 @@
 #include <stdio.h>
 
-void main() {
+int main()
+{
     int length, i;
     printf("Enter number of elements in the array: ");
     scanf("%d", &length);

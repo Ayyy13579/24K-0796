@@ -1,6 +1,7 @@
 #include <stdio.h>
 
-void main() {
+int main()
+{
     int array[10] = {},i,sum = 0;
 
     for (i=0;i<10;i++) {

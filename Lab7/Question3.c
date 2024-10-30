@@ -1,6 +1,7 @@
 #include <stdio.h>
 
-void main() {
+int main()
+{
     int array[10] = {}, i, max=0, min=1000;
     
     for (i=0;i<10;i++) {
@@ -17,5 +18,4 @@ void main() {
     }
     printf("Maximum number is %d \n", max);
     printf("Minimum number is %d \n", min);
-
 }

@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-void main()
+int main()
 {
     char Name[10];
     char ID[5];

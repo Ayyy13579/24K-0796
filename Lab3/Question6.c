@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-void main()
+int main()
 {
     int x1 = 5, x2 = 3, y1 = 4, y2 = 2;
     float slope;
