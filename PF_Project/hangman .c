@@ -2,6 +2,7 @@
 #include <string.h>
 #include <math.h>
 #include <stdlib.h>
+#include<time.h>
 
 char encryptword(char word[20], char encryptedword[20]);
 // void finaldecrypt(char word[20]);
@@ -25,6 +26,7 @@ char encryptword(char word[20], char encryptedword[20]) {
     } else if (length <= 8) {
         for (int i = 0; i < 2; i++){
             int hint = rand() % length;
+            
             randomindex[hint]=-1; 
         }
     } else {
@@ -44,17 +46,23 @@ char encryptword(char word[20], char encryptedword[20]) {
 
 
 
-char randomline(char filename[]) {
+char randomline(char filename[],char word[20]) {
     FILE *file;
     int count=0;
-    char words[100][20];
-    file=fopen(filename,'r');
+    char words[24][20];
+    file = fopen(filename, "r");
+    if (file == NULL) {
+        perror("Error opening file");
+        return NULL;
+    }
     while (fgets(words[count], sizeof(words[count]),file))
     {
         words[count][strcspn(words[count],"\n")]='\0';
         count++;
-       
-    }    
+    }
+    fclose(file);
+    srand(time(NULL));
+    strcpy(word,words[rand() % count]);
 }
 void displayEncrypted() {
 }
@@ -80,6 +88,7 @@ char compareandinput(char userchoice,int tries, char word[20], char encryptedwor
 
 void main() {
     int choice;
+    char word[20];
     while (1) {
     printf("Welcome to Hangman!\n");
     printf("Please choose a category to generate your word.\n");
@@ -89,28 +98,28 @@ void main() {
     switch (choice) {
     case 1:
         char filename[] = "transport.txt";
-        char word[20] = randomline(filename);
+        randomline(filename,word);
         encryptword(word);
         printf("Enter an alphabet ");
         break;
     case 2:
         char filename[] = "fruits.txt";
-        char word[20] = randomline(filename);
+        randomline(filename,word);
         encryptword(word);
         break;
     case 3:
         char filename[] = "country.txt";
-        char word = randomline(filename);
+       randomline(filename,word);
         encryptword(word);
         break;
     case 4:
         char filename[] = "sports.txt";
-        char word = randomline(filename);
+        randomline(filename,word);
         encryptword(word);
         break;
     case 5:
         char filename[] = "animal.txt";
-        char word = randomline(filename);
+        randomline(filename,word);
         encryptword(word);
         break;
     case 6:
