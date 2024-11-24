@@ -2,13 +2,13 @@
 #include <string.h>
 #include <math.h>
 #include <stdlib.h>
-#include<time.h>
+#include <time.h>
 
 char encryptword(char word[20], char encryptedword[20]);
 // void finaldecrypt(char word[20]);
 
 char encryptword(char word[20], char encryptedword[20]) {
-    int length = strlen(word);
+    int length = strlen(word), i = 0;
     int randomindex[length];
     int countrandomindex=0;
     for (int i = 0; i < length; i++) {
@@ -24,25 +24,32 @@ char encryptword(char word[20], char encryptedword[20]) {
         randomindex[hint]=-1;
         encryptedword[hint] = word[hint];
     } else if (length <= 8) {
-        for (int i = 0; i < 2; i++){
+        while (i < 2) {
             int hint = rand() % length;
-            
-            randomindex[hint]=-1; 
+            if (randomindex[hint] != -1) {
+                randomindex[hint]=-1;
+                encryptedword[hint] = word[hint];
+                i++;
+            }
         }
     } else {
-        for (int i = 0; i < 3; i++){
+        while (i < 3) {
             int hint = rand() % length;
-            encryptedword[hint] = word[hint];
-        }
+            if (randomindex[hint] != -1) {
+                randomindex[hint]=-1;
+                encryptedword[hint] = word[hint];
+                i++;
+            }
     }
     return encryptedword;
 }
+}
 
 
-// void finaldecrypt(char word[20]){
-//     printf("You lost.\n");
-//     printf("the word was %s", word);
-// }
+void finaldecrypt(char word[20]){
+    printf("You lost.\n");
+    printf("Te word was %s", word);
+}
 
 
 
@@ -67,7 +74,7 @@ char randomline(char filename[],char word[20]) {
 void displayEncrypted() {
 }
 
-char compareandinput(char userchoice,int tries, char word[20], char encryptedword[20]) {
+char compare(char userchoice,int tries, char word[20], char encryptedword[20]) {
     int charindex = 0;
     char found = 'F';
     for (int i=0;i<strlen(word); i++) {
@@ -80,6 +87,13 @@ char compareandinput(char userchoice,int tries, char word[20], char encryptedwor
     if (found == 'T') {
         encryptedword[charindex] = word[charindex];
         fputs(encryptedword,stdout);
+        printf("Letter %c found in the word. You still have %d tries left.", userchoice, tries);
+    } else {
+        tries--;
+        printf("Word not found. You now have %d tries left.", tries);
+        if (tries == 0) {
+            finaldecrypt(word);
+        }
     }
     return found;
 
@@ -87,9 +101,8 @@ char compareandinput(char userchoice,int tries, char word[20], char encryptedwor
 
 
 void main() {
-    int choice;
-    char word[20];
-    while (1) {
+    int choice, tries = 7;
+    char word[20], encryptedword[20];
     printf("Welcome to Hangman!\n");
     printf("Please choose a category to generate your word.\n");
     printf("1. Transport\n2. Fruits and Vegetables\n3. Countries\n4. Sport\n5. Animals\n6. Exit Program\n");
@@ -99,7 +112,7 @@ void main() {
     case 1:
         char filename[] = "transport.txt";
         randomline(filename,word);
-        encryptword(word);
+        encryptword(word, encryptedword);
         printf("Enter an alphabet ");
         break;
     case 2:
@@ -129,5 +142,4 @@ void main() {
         printf("Please enter the correct category.");
         break;
     }
-}
 }
