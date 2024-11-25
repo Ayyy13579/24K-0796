@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <time.h>
+#include <ctype.h>
 
 
 void encryptword(char word[20], char encryptedword[20]) {
@@ -43,7 +44,46 @@ void encryptword(char word[20], char encryptedword[20]) {
 }
 }
 
+void savescore(char filename[],int *tries, char word[20]){
+    FILE *scores;
+    char udelete;
+    scores=fopen(filename,'a');
+    int triesused=7-*tries;
+    int score=70-(triesused*10);
+    printf("you got a total score of %d out of 70\n",score);
+    printf("you used %d tries", triesused);
+    fprintf(scores,"for the word %s:\n",word);
+    fprintf(scores,"you got a total score of %d out of 70\n",score);
+    while (1)
+    {
+        printf("do you want to delete your previous records (Y/N): ");
+        scanf("%c",udelete);
+        udelete=toupper(udelete);
+        if (udelete=='Y' || udelete=='N')
+        {
+            break;
+        }   
+    }
+    switch (udelete)
+    {
+    case 'Y':
+        if (remove(filename)==0)
+        {
+            printf("records deleted successfully");
+        }
+        else
+        {
+            printf("couldnt delete records.");
+        }
+        break;
+    case 'N':
+        
+    default:
+        break;
+    }
 
+
+}
 void finaldecrypt(char word[20], char result){
     if (result == 'N') {
         printf("\nYou lost.\n");
