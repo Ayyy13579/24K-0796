@@ -50,7 +50,6 @@ void finaldecrypt(char word[20], char result){
         printf("The word was %s", word);
     } else {
         printf("\nYou won.\n");
-        printf("The word was %s.", word);
     }
 }
 
@@ -117,70 +116,75 @@ char compare(char userchoice,int *tries, char word[20], char encryptedword[20]) 
 
 void main() {
     int choice, tries = 7;
-    char word[20], encryptedword[20], gameOver = 'F', filename[20], alpha;
+    char word[20], encryptedword[20], gameOver = 'F', filename[20], alpha, correct = 'T';
     printf("Welcome to Hangman!\n");
     printf("Please choose a category to generate your word.\n");
     printf("1. Transport\n2. Fruits and Vegetables\n3. Countries\n4. Sport\n5. Animals\n6. Exit Program\n");
-    printf("Choose your category: ");
-    scanf("%d", &choice);
-    while ((getchar()) != '\n'); 
-
-    switch (choice) {
-    case 1:
-        strcpy(filename, "transport.txt");
-        randomline(filename,word);
-        encryptword(word, encryptedword);
-        printf("Your word is: %s\n", encryptedword);
-        while (gameOver == 'F') {
-        alpha = takeInput();
-        gameOver = compare(alpha,&tries,word,encryptedword);
+    
+    while (correct == 'T') {
+    
+        printf("Choose your category: ");
+        scanf("%d", &choice);
+        while ((getchar()) != '\n'); 
+        
+        switch (choice) {
+        case 1:
+            strcpy(filename, "transport.txt");
+            randomline(filename,word);
+            encryptword(word, encryptedword);
+            printf("Your word is: %s\n", encryptedword);
+            while (gameOver == 'F') {
+            alpha = takeInput();
+            gameOver = compare(alpha,&tries,word,encryptedword);
+            }
+            break;
+        case 2:
+            strcpy(filename, "fruits.txt");
+            randomline(filename,word);
+            encryptword(word, encryptedword);
+            printf("Your word is: %s\n", encryptedword);
+            while (gameOver == 'F') {
+            choice = takeInput();
+            gameOver = compare(choice,&tries,word,encryptedword);
+            }
+            break;
+        case 3:
+            strcpy(filename, "country.txt");
+            randomline(filename,word);
+            encryptword(word, encryptedword);
+            printf("Your word is: %s\n", encryptedword);
+            while (gameOver == 'F') {
+            choice = takeInput();
+            gameOver = compare(choice,&tries,word,encryptedword);
+            }
+            break;
+        case 4:
+            strcpy(filename, "sports.txt");
+            randomline(filename,word);
+            encryptword(word, encryptedword);
+            printf("Your word is: %s\n", encryptedword);
+            while (gameOver == 'F') {
+            choice = takeInput();
+            gameOver = compare(choice,&tries,word,encryptedword);
+            }
+            break;
+        case 5:
+            strcpy(filename, "animals.txt");
+            randomline(filename,word);
+            encryptword(word, encryptedword);
+            printf("Your word is: %s\n", encryptedword);
+            while (gameOver == 'F') {
+            choice = takeInput();
+            gameOver = compare(choice,&tries,word,encryptedword);
+            }
+            break;
+        case 6:
+            printf("Exiting program...");
+            correct = 'F';
+            break;
+        default:
+            printf("Please enter a correct option from 1-6.\n");
+            break;
         }
-        break;
-    case 2:
-        strcpy(filename, "fruits.txt");
-        randomline(filename,word);
-        encryptword(word, encryptedword);
-        printf("Your word is: %s\n", encryptedword);
-        while (gameOver == 'F') {
-        choice = takeInput();
-        gameOver = compare(choice,&tries,word,encryptedword);
-        }
-        break;
-    case 3:
-        strcpy(filename, "country.txt");
-        randomline(filename,word);
-        encryptword(word, encryptedword);
-        printf("Your word is: %s\n", encryptedword);
-        while (gameOver == 'F') {
-        choice = takeInput();
-        gameOver = compare(choice,&tries,word,encryptedword);
-        }
-        break;
-    case 4:
-        strcpy(filename, "sports.txt");
-        randomline(filename,word);
-        encryptword(word, encryptedword);
-        printf("Your word is: %s\n", encryptedword);
-        while (gameOver == 'F') {
-        choice = takeInput();
-        gameOver = compare(choice,&tries,word,encryptedword);
-        }
-        break;
-    case 5:
-        strcpy(filename, "animals.txt");
-        randomline(filename,word);
-        encryptword(word, encryptedword);
-        printf("Your word is: %s\n", encryptedword);
-        while (gameOver == 'F') {
-        choice = takeInput();
-        gameOver = compare(choice,&tries,word,encryptedword);
-        }
-        break;
-    case 6:
-        printf("Exiting program...");
-        break;
-    default:
-        printf("Please enter the correct category.");
-        break;
     }
 }
