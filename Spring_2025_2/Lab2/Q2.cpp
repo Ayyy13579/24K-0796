@@ -1,7 +1,7 @@
 #include <iostream>
 using namespace std;
 
-void* addfunction(int* arr) {
+void* addfunction(void* arr) {
     int x;
     for (int i=0 ; i<5; i++) {
         cout << "Enter a number to add to element " << i+1 << endl;
