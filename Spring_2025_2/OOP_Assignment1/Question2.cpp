@@ -5,10 +5,10 @@ using namespace std;
 class Robot {
     public:
     string name;
-    int hits;
+    int hits = 0;
     int x;
     int y;
-    tuple <int, int> Goal;
+    tuple <int, int> Goal{3,3};
     int hitBall(int &ballX, int &ballY, const string &direction) {
         if (direction == "left") {
             ballX -= 1;
@@ -31,18 +31,21 @@ class Robot {
     int getY() {
         return y;
     }
-    void move(int &dx, int &dy) {
+    void move(int dx, int dy) {
         x = dx;
         y = dy;
     }
     tuple <int,int> getPosition() {
         return make_tuple(x,y);
     }
-    void isGoalReached(int &ballX, int &ballY) {
+    bool isGoalReached(int &ballX, int &ballY) {
         if (ballX == 3 && ballY == 3) {
             cout << "Goal!" << endl;
+            return true;
         } else {
             cout << "No goal..." << endl;
+            cout << "Ball's coordinates: " << ballX << " " << ballY << endl;
+            return false;
         }
     }
 };
@@ -57,20 +60,34 @@ class Game {
     public:
     Team team1;
     Team team2;
-    tuple <int, int> ball;
-    tuple <int, int> goal;
+    tuple <int, int> ball{0,0};
+    tuple <int, int> goal{3,3};
     void startGame() {
+        bool won = false;
         cout << "Game started!" << endl;
+        while (won == false) {
+            play(&team1);
+            if (team1.r1->isGoalReached(get<0>(ball), get<1>(ball))) {
+                won = true;
+                break;
+            }
+            play(&team2);
+            if (team2.r1->isGoalReached(get<0>(ball), get<1>(ball))) {
+                won = true;
+                break;
+            }
+        }
     }
+
     int play(Team* team1) {
         string direction;
-        int ballX = 0, ballY = 0;
+        int& ballX = get<0>(ball);
+        int& ballY = get<1>(ball);
         cout << "Where do you want to hit the ball?" << endl;
         cin >> direction;
-        int hits = team1->r1->hitBall(ballX, ballY, direction);
+        int shoots = team1->r1->hitBall(ballX, ballY, direction);
         team1->r1->move(ballX, ballY);
-        team1->r1->isGoalReached(ballX, ballY);
-        return hits;
+        return shoots;
     }
     void declareWinner(Robot* r1, Robot* r2) {
         if (r1->hits < r2->hits) {
@@ -79,4 +96,16 @@ class Game {
             cout << "Team 2 is the winner!" << endl;
         }
     }
+};
+
+int main() {
+    Robot r1;
+    Robot r2;
+    Team t1;
+    Team t2;
+    t1.r1 = &r1;
+    t2.r1 = &r2;
+    Game g1;
+    g1.startGame();
+    g1.declareWinner(&r1, &r2);
 }
