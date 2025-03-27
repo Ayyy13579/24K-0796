@@ -44,11 +44,21 @@ public:
         bool first = true;
         for (int i = p.coefficients.size() - 1; i >= 0; --i) {
             if (p.coefficients[i] != 0) {
-                if (!first) os << " ";
-                if (p.coefficients[i] > 0 && !first) os << "+ ";
-                if (p.coefficients[i] < 0) os << "- ";
-                os << (abs(p.coefficients[i]) != 1 || i == 0 ? abs(p.coefficients[i]) : "") << (i > 0 ? "x" : "")
-                   << (i > 1 ? "^" + to_string(i) : "");
+                if (!first) {
+                    os << (p.coefficients[i] > 0 ? " + " : " - ");
+                } else if (p.coefficients[i] < 0) {
+                    os << "-";
+                }
+
+                int abs_coeff = abs(p.coefficients[i]);
+                if (abs_coeff != 1 || i == 0) {
+                    os << abs_coeff;
+                }
+
+                if (i > 0) {
+                    os << "x";
+                    if (i > 1) os << "^" << i;
+                }
                 first = false;
             }
         }
@@ -63,10 +73,8 @@ class PolynomialUtils {
 public:
     static int evaluate(const Polynomial& p, int x) {
         int result = 0;
-        int power = 1;
-        for (int coeff : p.coefficients) {
-            result += coeff * power;
-            power *= x;
+        for (int i = p.coefficients.size() - 1; i >= 0; --i) {
+            result = result * x + p.coefficients[i];
         }
         return result;
     }
