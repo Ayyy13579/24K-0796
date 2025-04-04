@@ -82,11 +82,11 @@ public:
     string stopName;
     int studentsAssigned[10];
 
-    Stop() {}
-
     Stop(string name) {
         stopName = name;
     }
+
+    Stop() {}
 
     void assignStudent(int rollno, int index) {
         if (index < 10) {

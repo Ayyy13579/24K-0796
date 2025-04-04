@@ -20,14 +20,9 @@ public:
         os << g.name << " (Scare Level: " << g.scareLevel << ")";
         return os;
     }
-
-    Ghost operator+(const Ghost& g) const {
-        int combinedScareLevel = this->scareLevel + g.scareLevel;
-        return Ghost(this->name + " & " + g.name, combinedScareLevel);
-    }
 };
 
-class Poltergeist : public Ghost {
+class Poltergeist : public virtual Ghost {
 public:
     Poltergeist(string n, int scare) : Ghost(n, scare) {}
 
@@ -36,7 +31,7 @@ public:
     }
 };
 
-class Banshee : public Ghost {
+class Banshee : public virtual Ghost {
 public:
     Banshee(string n, int scare) : Ghost(n, scare) {}
 
@@ -45,7 +40,7 @@ public:
     }
 };
 
-class ShadowGhost : public Ghost {
+class ShadowGhost : public virtual Ghost {
 public:
     ShadowGhost(string n, int scare) : Ghost(n, scare) {}
 
@@ -122,7 +117,6 @@ int main() {
 
     HauntedHouse house2("Haunted Castle");
     house2.addGhost(new Poltergeist("Ghost4", rand() % 10 + 1));
-    house2.addGhost(new ShadowPoltergeist("Ghost5", rand() % 10 + 1));
 
     vector<Visitor> visitors = {
         Visitor("Alice", 3), 

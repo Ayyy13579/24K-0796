@@ -47,6 +47,9 @@ public:
     int getPermissions() const {
         return permissions;
     }
+    string getUserID() const {
+        return userID;
+    }
 };
 
 class Student : public User {
@@ -62,7 +65,7 @@ public:
         cout << "Role: Student" << endl;
     }
 
-    void addAssignment(int assignmentID) {
+    void addAssignment() {
         assignments.push_back(0);
     }
 
@@ -83,15 +86,15 @@ public:
     }
 };
 
-class TA : public Student {
+class tAssistant : public Student {
 private:
     vector<Student*> assignedStudents;
     vector<string> projects;
 
 public:
-    TA(string n, string id, string em, string password)
+    tAssistant(string n, string id, string em, string password)
         : Student(n, id, em, password) {
-        permissions = TA;
+        permissions = STUDENT | TA;
     }
 
     void display() const override {
@@ -102,19 +105,19 @@ public:
     void assignStudent(Student* student) {
         if (assignedStudents.size() < 10) {
             assignedStudents.push_back(student);
-            cout << "Assigned Student " << student->userID << " to TA." << endl;
+            cout << "Assigned Student " << student->getUserID() << " to TA." << endl;
         } else {
             cout << "TA can only manage up to 10 students!" << endl;
         }
     }
 
     void assignProject(string project) {
-        if (projects.size() < 2) {
-            projects.push_back(project);
-            cout << "Assigned project: " << project << endl;
-        } else {
+        if (projects.size() >= 2) {
             cout << "TA can only work on 2 projects at a time!" << endl;
+            return;
         }
+        projects.push_back(project);
+        cout << "Assigned project: " << project << endl;
     }
 
     void viewProjects() const {
@@ -127,7 +130,7 @@ public:
 
 class Professor : public User {
 private:
-    vector<TA*> assignedTAs;
+    vector<tAssistant*> assignedTAs;
     vector<string> researchProjects;
 
 public:
@@ -139,30 +142,33 @@ public:
         cout << "Role: Professor" << endl;
     }
 
-    void assignProjectToTA(TA* ta, string project) {
+    void assignProjectToTA(tAssistant* ta, string project) {
         ta->assignProject(project);
     }
 
-    void collaborateWithTA(TA* ta) {
-        cout << "Professor collaborating with TA on projects." << endl;
-        ta->viewProjects();
+    void collaborateWithTA(tAssistant* ta, string project) {
+        cout << "Professor collaborating with TA on project: " << project << endl;
+        ta->assignProject(project);
     }
 };
 
 void authenticateAndPerformAction(User* user, string action, string password) {
     if (user->authenticate(password)) {
         cout << "Authenticated successfully!" << endl;
+
         if (action == "submit assignment" && (user->getPermissions() & STUDENT)) {
             Student* student = dynamic_cast<Student*>(user);
             if (student) {
-                cout << "Performing assignment submission..." << endl;
                 student->submitAssignment(0);
             }
         } else if (action == "assign project" && (user->getPermissions() & PROFESSOR)) {
             Professor* professor = dynamic_cast<Professor*>(user);
             if (professor) {
                 cout << "Professor assigning project..." << endl;
-                professor->assignProjectToTA(new TA("TA2", "ID2", "ta2@example.com", "password"), "Project 1");
+                tAssistant* existingTA = new tAssistant("Jane Smith", "TA1", "jane@example.com", "password123");
+                professor->assignProjectToTA(existingTA, "AI Research");
+                existingTA->viewProjects();
+                delete existingTA;
             }
         } else {
             cout << "Action not allowed for this user role!" << endl;
@@ -174,7 +180,7 @@ void authenticateAndPerformAction(User* user, string action, string password) {
 
 int main() {
     Student s1("John Doe", "S1", "john@example.com", "password123");
-    TA ta1("Jane Smith", "TA1", "jane@example.com", "password123");
+    tAssistant ta1("Jane Smith", "TA1", "jane@example.com", "password123");
     Professor p1("Dr. Brown", "P1", "drbrown@example.com", "profpass");
 
     s1.display();
@@ -182,8 +188,11 @@ int main() {
     p1.display();
 
     authenticateAndPerformAction(&s1, "submit assignment", "password123");
-    authenticateAndPerformAction(&ta1, "assign project", "password123");
     authenticateAndPerformAction(&p1, "assign project", "profpass");
+
+    p1.assignProjectToTA(&ta1, "Machine Learning Research");
+
+    ta1.viewProjects();
 
     return 0;
 }
