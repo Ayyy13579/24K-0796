@@ -6,3 +6,5 @@ For the word canoe:
 You got a total score of 0 out of 70.
 For the word rugby:
 You got a total score of 60 out of 70.
+For the word cricket:
+You got a total score of 0 out of 70.

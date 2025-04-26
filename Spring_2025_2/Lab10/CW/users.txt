@@ -1,0 +1,2 @@
+uuid1 Linus Torvalds California linus@linux.org
+uuid2 Ada Lovelace London ada@math.org
