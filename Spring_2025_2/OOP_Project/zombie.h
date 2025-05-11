@@ -15,6 +15,6 @@ class Zombie {
     void update(float deltaTime);
     void draw(sf::RenderWindow& window);
     void takeDamage(int damage);
-    bool isDead() const { return health <= 0; }
+    bool isDead() const { return health <= 0; } 
     bool reachedEnd() const;
 };

@@ -16,7 +16,7 @@ int main()
     if (!grassTexture.loadFromFile("images/grass.jpeg") ||
         !towerTexture.loadFromFile("images/tower.png") ||
         !pathTexture.loadFromFile("images/path.jpg")) {
-        throw std::runtime_error("Failed to load textures");
+        throw std::runtime_error("c to load textures");
     }
 
     while (window.isOpen())
