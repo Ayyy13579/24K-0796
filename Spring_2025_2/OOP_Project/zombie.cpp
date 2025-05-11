@@ -1,11 +1,12 @@
 #include <SFML/Graphics.hpp>
 #include "zombie.h"
 #include <cmath>
+#include <iostream>
 
-Zombie::Zombie(sf::Texture& texture, const std::vector<sf::Vector2f>& path, float speed, int health)
-    : path(path), speed(speed), health(health), currentTargetIndex(0) {
+Zombie::Zombie(sf::Texture& texture, const std::vector<sf::Vector2f>& path)
+    : path(path), speed(50.0f), health(10), currentTargetIndex(0) {
     sprite.setTexture(texture);
-    sprite.setScale(0.1f, 0.1f);
+    sprite.setScale(1.0f, 1.0f);
     sprite.setPosition(path[0]);
 }
 
@@ -34,9 +35,6 @@ void Zombie::update(float deltaTime) {
     sprite.move(direction * speed * deltaTime);
     if (distance < speed * deltaTime) {
         currentTargetIndex++;
-        if (currentTargetIndex < path.size()) {
-            sprite.setPosition(path[currentTargetIndex]);
-        }
     }
 }
 

@@ -10,7 +10,7 @@ class Zombie {
     int currentTargetIndex;
 
     public:
-    Zombie(sf::Texture& texture, const std::vector<sf::Vector2f>& path, float speed, int health);
+    Zombie(sf::Texture& texture, const std::vector<sf::Vector2f>& path);
 
     void update(float deltaTime);
     void draw(sf::RenderWindow& window);
