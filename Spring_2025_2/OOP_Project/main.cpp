@@ -3,7 +3,7 @@
 #include "map.h"
 #include "zombie.h"
 #include <iostream>
-
+#include <vector>
 
 int main()
 {
@@ -36,8 +36,14 @@ int main()
         throw std::runtime_error("failed to load textures");
     }
 
-    Zombie zombie(zombieTexture, path);
+    std::vector<Zombie> zombies;
+    FastZombie fastZombie(zombieTexture, path);
+    StrongZombie strongZombie(zombieTexture, path);
     sf::Clock clock;
+    float spawnTimer = 0.0f;
+    int zombiesSpawned = 0;
+    const int maxZombies = 5;
+    
     while (window.isOpen())
     {
         sf::Event event;
@@ -49,8 +55,20 @@ int main()
         window.clear();
         Map::drawMap(window, grassTexture, towerTexture, pathTexture, chestTexture);
         float deltaTime = clock.restart().asSeconds();
-        zombie.update(deltaTime);
-        zombie.draw(window);
+        spawnTimer += deltaTime;
+        if (spawnTimer >= 1.0f && zombiesSpawned < maxZombies) {
+            zombies.emplace_back(zombieTexture, path);
+            zombiesSpawned++;
+            spawnTimer = 0.0f;
+            }
+        for (Zombie& z : zombies) {
+            z.update(deltaTime);
+            z.draw(window);
+            }
+        fastZombie.update(deltaTime);
+        fastZombie.draw(window);
+        strongZombie.update(deltaTime);
+        strongZombie.draw(window);
         window.display();
     }
     return 0;

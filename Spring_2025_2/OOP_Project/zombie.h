@@ -2,7 +2,7 @@
 #include <vector>
 
 class Zombie {
-    private:
+    protected:
     sf::Sprite sprite;
     std::vector<sf::Vector2f> path;
     float speed;
@@ -17,4 +17,14 @@ class Zombie {
     void takeDamage(int damage);
     bool isDead() const { return health <= 0; } 
     bool reachedEnd() const;
+};
+
+class FastZombie : public Zombie {
+    public:
+    FastZombie(sf::Texture& texture, const std::vector<sf::Vector2f>& path);
+};
+
+class StrongZombie : public Zombie {
+    public:
+    StrongZombie(sf::Texture& texture, const std::vector<sf::Vector2f>& path);
 };

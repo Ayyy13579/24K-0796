@@ -43,3 +43,21 @@ void Zombie::draw(sf::RenderWindow& window) {
         window.draw(sprite);
     }
 }
+
+FastZombie::FastZombie(sf::Texture& texture, const std::vector<sf::Vector2f>& path)
+    : Zombie(texture, path) {
+        speed = 100.0f;
+        health = 5;
+        sprite.setTexture(texture);
+        sprite.setScale(1.0f, 1.0f);
+        sprite.setPosition(path[0]);
+}
+
+StrongZombie::StrongZombie(sf::Texture& texture, const std::vector<sf::Vector2f>& path)
+    : Zombie(texture, path) {
+    speed = 30.0f;
+    health = 20;
+    sprite.setTexture(texture);
+    sprite.setScale(1.0f, 1.0f);
+    sprite.setPosition(path[0]);
+}
