@@ -1,7 +1,7 @@
 all: compile link
 
 compile:
-	g++ -Isrc/include -c main.cpp map.cpp zombie.cpp
+	g++ -Isrc/include -c main.cpp map.cpp zombie.cpp wave.cpp
 
 link:
-	g++ main.o map.o zombie.o -o tower-game -Lsrc/lib -lsfml-graphics -lsfml-window -lsfml-system
+	g++ main.o map.o zombie.o wave.o -o tower-game -Lsrc/lib -lsfml-graphics -lsfml-window -lsfml-system
