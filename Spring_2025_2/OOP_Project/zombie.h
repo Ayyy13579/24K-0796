@@ -12,7 +12,7 @@ class Zombie {
 
     public:
     Zombie(sf::Texture& texture, const std::vector<sf::Vector2f>& path);
-
+    sf::Vector2f getPosition() const { return sprite.getPosition(); }
     void update(float deltaTime);
     void draw(sf::RenderWindow& window);
     void takeDamage(int damage);

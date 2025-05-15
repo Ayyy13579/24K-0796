@@ -3,21 +3,31 @@
 #include "map.h"
 #include "zombie.h"
 #include "wave.h"
+#include "tower.h"
+#include "bullet.h"
 #include <iostream>
 #include <vector>
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode(1000, 900), "Tower Game");
+    sf::RenderWindow window(sf::VideoMode(1000, 900), "Tower Defense");
     window.setFramerateLimit(60);
 
-    sf::Texture grassTexture;
-    sf::Texture towerTexture;
-    sf::Texture pathTexture;
-    sf::Texture chestTexture;
-    sf::Texture regzombieTexture;
-    sf::Texture fastzombieTexture;
-    sf::Texture strzombieTexture;
+    // Load textures
+    sf::Texture grassTexture, towerTexture, pathTexture, chestTexture;
+    sf::Texture regZombieTexture, fastZombieTexture, strongZombieTexture;
 
+    if (!grassTexture.loadFromFile("resources/grass.jpeg") ||
+        !towerTexture.loadFromFile("resources/tower.png") ||
+        !pathTexture.loadFromFile("resources/path.jpg") ||
+        !chestTexture.loadFromFile("resources/chest.jpg") ||
+        !regZombieTexture.loadFromFile("resources/zombie.png") ||
+        !fastZombieTexture.loadFromFile("resources/fastzombie.png") ||
+        !strongZombieTexture.loadFromFile("resources/strongzombie.png")) {
+        std::cerr << "Failed to load textures!" << std::endl;
+        return 1;
+    }
+
+    // Initialize game components
     const int tileSize = Map::tileSize;
     std::vector<sf::Vector2f> path = {
         {3 * tileSize, 0 * tileSize},
@@ -28,48 +38,66 @@ int main() {
         {5 * tileSize, 5 * tileSize},
         {5 * tileSize, 6 * tileSize},
         {5 * tileSize, 7 * tileSize},
-        {5 * tileSize, 8 * tileSize},
+        {5 * tileSize, 8 * tileSize}
     };
 
-    if (!grassTexture.loadFromFile("images/grass.jpeg") ||
-        !towerTexture.loadFromFile("images/tower.png") ||
-        !pathTexture.loadFromFile("images/path.jpg") ||
-        !chestTexture.loadFromFile("images/chest.jpg") ||
-        !regzombieTexture.loadFromFile("images/zombie.png") ||
-        !fastzombieTexture.loadFromFile("images/fastzombie.png") ||
-        !strzombieTexture.loadFromFile("images/strongzombie.png")) {
-        std::cerr << "Error loading textures" << std::endl;
-    }
+    Waves waves(regZombieTexture, fastZombieTexture, strongZombieTexture, path);
+    std::vector<Tower> towers;
 
-    Waves waves(regzombieTexture, fastzombieTexture, strzombieTexture, path);
+    // Add custom towers
+    const sf::Vector2f tower1Pos(1 * tileSize + tileSize/2, 3 * tileSize + tileSize/2);
+    const sf::Vector2f tower2Pos(7 * tileSize + tileSize/2, 7 * tileSize + tileSize/2);
+
+    // Create towers with parameters (position, range, attacks-per-second)
+    towers.emplace_back(tower1Pos, towerTexture, 300.0f, 1.5f);
+    towers.emplace_back(tower2Pos, towerTexture, 300.0f, 1.5f);
+
     sf::Clock clock;
-    float spawnTimer = 0.0f;
-    int zombiesSpawned = 0;
-    const int maxZombies = 5;
     bool damage = false;
 
+    // Main game loop
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed)
+            if (event.type == sf::Event::Closed ||
+                (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)) {
                 window.close();
-            if (event.type == sf::Event::KeyPressed) {
-                if (event.key.code == sf::Keyboard::E) {
-                    damage = true;
-                }
             }
         }
-        window.clear();
-        Map::drawMap(window, grassTexture, towerTexture, pathTexture, chestTexture);
+
         float deltaTime = clock.restart().asSeconds();
+
+        // Update game state
         waves.update(deltaTime);
-        waves.drawZombies(window);
+        auto zombies = waves.getZombies();
+
+        // Update towers
+        for (auto& tower : towers) {
+            tower.update(deltaTime, zombies);
+        }
+
+        // Handle manual damage input
         if (damage) {
-            for (Zombie* z : waves.getZombies()) {
+            for (Zombie* z : zombies) {
                 z->takeDamage(1);
             }
             damage = false;
         }
+
+        // Render
+        window.clear();
+        
+        // Draw game world
+        Map::drawMap(window, grassTexture, towerTexture, pathTexture, chestTexture);
+        waves.drawZombies(window);
+
+        // Draw tower projectiles
+        for (auto& tower : towers) {
+            tower.draw(window);
+        }
+
         window.display();
     }
+
+    return 0;
 }
