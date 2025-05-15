@@ -13,6 +13,20 @@ class Zombie {
     public:
     Zombie(sf::Texture& texture, const std::vector<sf::Vector2f>& path);
     sf::Vector2f getPosition() const { return sprite.getPosition(); }
+    sf::FloatRect getBounds() const { 
+        sf::FloatRect b = sprite.getGlobalBounds();
+
+        // compute 20% margins
+        float dx = b.width  * 0.2f;
+        float dy = b.height * 0.2f;
+
+        // inset the rectangle
+        b.left   += dx;
+        b.top    += dy;
+        b.width  -= 2*dx;
+        b.height -= 2*dy;
+        return b; 
+    }
     void update(float deltaTime);
     void draw(sf::RenderWindow& window);
     void takeDamage(int damage);
