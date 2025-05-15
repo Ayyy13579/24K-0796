@@ -1,78 +1,63 @@
+// tower.h
 #pragma once
 #include <vector>
+#include <SFML/Graphics.hpp>
 #include "bullet.h"
 #include "zombie.h"
-#include <math.h>
 
 class Tower {
-private:
-    sf::Vector2f position;
+    sf::Vector2f pos;
     float cooldown;
     float range;
-    std::vector<Bullet> bullets;
     float attackSpeed;
-    static constexpr float FIRE_RATE = 1.0f;
     sf::Sprite sprite;
-
+    std::vector<Bullet> bullets;
 
 public:
-    Tower(sf::Vector2f pos, const sf::Texture& texture, float range = 300.0f, float attackSpeed = 1.5f)
-    : position(pos), range(range), attackSpeed(attackSpeed), cooldown(0.0f) {
-    sprite.setTexture(texture);
-    sprite.setOrigin(texture.getSize().x / 2.0f, texture.getSize().y / 2.0f);
-    sprite.setPosition(position);
-    float scaleX = Map::tileSize / static_cast<float>(texture.getSize().x);
-    float scaleY = Map::tileSize / static_cast<float>(texture.getSize().y);
-    float uniformScale = std::min(scaleX, scaleY);
-    sprite.setScale(uniformScale*1.2, uniformScale*1.2);
- // Optional: Scale it to fit your tile size
+    Tower(sf::Vector2f position, const sf::Texture& tex, float range = 300.f, float atkSpd = 1.5f)
+      : pos(position), cooldown(0), range(range), attackSpeed(atkSpd) {
+        sprite.setTexture(tex);
+        sprite.setOrigin(tex.getSize().x / 2.f, tex.getSize().y / 2.f);
+        sprite.setPosition(pos);
+        float sX = Map::tileSize / float(tex.getSize().x);
+        float sY = Map::tileSize / float(tex.getSize().y);
+        float u = std::min(sX, sY);
+        sprite.setScale(u*1.4, u*1.4);
     }
 
+    void update(float dt, const std::vector<Zombie*>& zombies, bool allowFire) {
+        cooldown -= dt;
+        Zombie* target = nullptr;
+        float minD = range;
 
-        void update(float deltaTime, std::vector<Zombie*>& zombies) {
-        cooldown -= deltaTime;
-        
-        // Find closest alive zombie within range
-        Zombie* nearest = nullptr;
-        float minDistance = std::numeric_limits<float>::max();
-        
-        for (auto zombie : zombies) {
-            if (zombie->isDead()) continue;
-            
-            float dx = position.x - zombie->getPosition().x;
-            float dy = position.y - zombie->getPosition().y;
-            float distance = std::hypot(dx, dy);
-            
-            if (distance < range && distance < minDistance) {
-                minDistance = distance;
-                nearest = zombie;
+        for (auto z : zombies) {
+            if (z->isDead()) continue;
+            float dx = pos.x - z->getPosition().x;
+            float dy = pos.y - z->getPosition().y;
+            float d = std::hypot(dx, dy);
+            if (d < minD) {
+                minD = d;
+                target = z;
             }
         }
 
-        // Shoot at target
-        if (nearest && cooldown <= 0) {
-            bullets.emplace_back(position, nearest);
-            cooldown = 1.0f / attackSpeed;
-        }
+          if (allowFire && target && cooldown <= 0.f) {
+             bullets.emplace_back(pos, target);
+             cooldown = 1.f / attackSpeed;
+         }
 
-        // Update bullets
-        for (auto& bullet : bullets) {
-            bullet.update(deltaTime);
-        }
-
-        // Remove inactive bullets
-        bullets.erase(
-            std::remove_if(bullets.begin(), bullets.end(),
-                [](const Bullet& b) { return !b.isActive(); }),
-            bullets.end());
+        for (auto& b : bullets) b.update(dt);
+        bullets.erase(std::remove_if(bullets.begin(), bullets.end(),
+                                     [](auto& b){ return !b.isActive(); }),
+                      bullets.end());
     }
 
-
-    void draw(sf::RenderWindow& window) const {
-    window.draw(sprite);
-    for (const auto& bullet : bullets) {
-        bullet.draw(window);
-        }
+    void draw(sf::RenderWindow& w) const {
+        w.draw(sprite);
+        for (auto& b : bullets) b.draw(w);
     }
 
+    // Accessors needed by main.cpp
+    sf::Vector2f getPosition() const { return pos; }
+    float getRange() const       { return range; }
 };
