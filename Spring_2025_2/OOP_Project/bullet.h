@@ -21,19 +21,36 @@ public:
     }
 
      void update(float deltaTime) {
-        if (!active || !target || target->isDead()) return;
+        if (!active || !target || target->isDead()) 
+            return;
 
-        sf::Vector2f direction = target->getPosition() - shape.getPosition();
-        float distance = std::hypot(direction.x, direction.y);
+        // Current positions
+        sf::Vector2f curPos   = shape.getPosition();
+        sf::Vector2f targetPos = target->getPosition();
         
-        if (distance > HIT_RANGE) {
-            direction /= distance;
-            shape.move(direction * speed * deltaTime);
-        } else {
+        // Vector toward the target
+        sf::Vector2f dir = targetPos - curPos;
+        float dist = std::hypot(dir.x, dir.y);
+        if (dist == 0.f) {
+            // Already exactly on top: hit immediately
             target->takeDamage(damage);
             active = false;
+            return;
         }
+        
+        // If we're close enough to hit in this step, register it now
+        float moveStep = speed * deltaTime;
+        if (dist <= moveStep || shape.getGlobalBounds().intersects(target->getBounds())) {
+            target->takeDamage(damage);
+            active = false;
+            return;
+        }
+
+        // Otherwise, move toward the target
+        dir /= dist;  // normalize
+        shape.move(dir * moveStep);
     }
+
 
     void draw(sf::RenderWindow& window) const {
         if (active) window.draw(shape);
