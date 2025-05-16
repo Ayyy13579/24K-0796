@@ -21,11 +21,18 @@ string showMainMenu(sf::RenderWindow& window) {
     }
 
     sf::Texture backgroundTexture;
-    if (!backgroundTexture.loadFromFile("resources/background.png")) {
+    if (!backgroundTexture.loadFromFile("resources/background.JPG")) {
         std::cerr << "Failed to load background texture\n";
         return "exit";
     }
-    sf::Sprite background(backgroundTexture);
+    sf::Sprite backgroundSprite(backgroundTexture);
+
+    sf::Vector2u textureSize = backgroundTexture.getSize();    // Size of the image
+    sf::Vector2u windowSize = window.getSize();                // Size of the window
+
+    float scaleX = static_cast<float>(windowSize.x) / textureSize.x;
+    float scaleY = static_cast<float>(windowSize.y) / textureSize.y;
+    backgroundSprite.setScale(scaleX, scaleY);
 
     sf::Text title("Tower Defense Simulator", font, 60);
     title.setPosition(100, 200);
@@ -60,7 +67,7 @@ string showMainMenu(sf::RenderWindow& window) {
         }
 
         window.clear();
-        window.draw(background);
+        window.draw(backgroundSprite);
         window.draw(title);
         window.draw(startbutton);
         window.draw(exitbutton);

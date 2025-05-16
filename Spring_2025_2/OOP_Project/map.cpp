@@ -47,7 +47,6 @@ void Map::drawMap(sf::RenderWindow& window, sf::Texture& grassTexture, sf::Textu
                     window.draw(pathSprite);
                     break;
                 }
-                // REMOVED CASE 3 (TOWERS DRAWN ELSEWHERE)
             }
         }
     }
