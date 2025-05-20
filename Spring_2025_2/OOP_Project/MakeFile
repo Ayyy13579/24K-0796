@@ -1,7 +1,22 @@
-all: compile link
+# -------------------------------
+# Variables (for future-proofing)
+CXX    := g++
+INCDIR := src/include
+LIBDIR := src/lib
+LIBS   := -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+SRCS   := main.cpp map.cpp zombie.cpp wave.cpp
+OBJS   := $(SRCS:.cpp=.o)
+# -------------------------------
 
-compile:
-	g++ -Isrc/include -c main.cpp map.cpp zombie.cpp wave.cpp
+all: tower-game
 
-link:
-	g++ main.o map.o zombie.o wave.o -o tower-game -Lsrc/lib -lsfml-graphics -lsfml-window -lsfml-system
+# Compile each .cpp into .o
+%.o: %.cpp
+	$(CXX) -I$(INCDIR) -c $< -o $@
+
+# Link both object files
+tower-game: $(OBJS)
+	$(CXX) $(OBJS) -o $@ -L$(LIBDIR) $(LIBS)
+
+clean:
+	rm -f $(OBJS) tower-game

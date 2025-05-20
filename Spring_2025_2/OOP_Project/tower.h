@@ -2,6 +2,7 @@
 #pragma once
 #include <vector>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include "bullet.h"
 #include "zombie.h"
 
@@ -12,21 +13,21 @@ class Tower {
     float attackSpeed;
     sf::Sprite sprite;
     std::vector<Bullet> bullets;
+    sf::Sound* fireSound = nullptr; // Add this line
 
 public:
-    Tower(sf::Vector2f position, const sf::Texture& tex, float range = 300.f, float atkSpd = 1.5f)
-      : pos(position), cooldown(0), range(range), attackSpeed(atkSpd) {
+    Tower(sf::Vector2f position, const sf::Texture& tex, float range = 300.f, float atkSpd = 1.5f, sf::Sound* fireSound = nullptr)
+      : pos(position), cooldown(0), range(range), attackSpeed(atkSpd), fireSound(fireSound) {
         sprite.setTexture(tex);
         sprite.setOrigin(tex.getSize().x / 2.f, tex.getSize().y / 2.f);
         sprite.setPosition(pos);
         float sX = Map::tileSize / float(tex.getSize().x);
         float sY = Map::tileSize / float(tex.getSize().y);
         float u = std::min(sX, sY);
-        sprite.setScale(u*1.4, u*1.4);
+        sprite.setScale(u*1.5, u*1.5);
     }
 
     void update(float dt, const std::vector<Zombie*>& zombies, bool allowFire) {
-        cooldown -= dt;
         Zombie* target = nullptr;
         float minD = range;
 
@@ -41,16 +42,19 @@ public:
             }
         }
 
-          if (allowFire && target && cooldown <= 0.f) {
-             bullets.emplace_back(pos, target);
-             cooldown = 1.f / attackSpeed;
-         }
+        
+        if (allowFire && target && cooldown <= 0.f) {
+            bullets.emplace_back(pos, target);
+            if (fireSound) fireSound->play(); // Play sound
+            cooldown = cooldown;
+        }
 
         for (auto& b : bullets) b.update(dt);
         bullets.erase(std::remove_if(bullets.begin(), bullets.end(),
-                                     [](auto& b){ return !b.isActive(); }),
-                      bullets.end());
+            [](auto& b){ return !b.isActive(); }),
+            bullets.end());
     }
+
 
     void draw(sf::RenderWindow& w) const {
         w.draw(sprite);
