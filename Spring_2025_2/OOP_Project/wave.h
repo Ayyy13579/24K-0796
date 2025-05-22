@@ -45,6 +45,7 @@ class Waves {
           sf::Sound* zombieHitSound, sf::Sound* zombieDieSound);
     void update(float deltaTime);
     void drawZombies(sf::RenderWindow& window);
+    bool isGameOver() const { return gameOver; }
     bool allZombiesDead() const;
     void prepareNextWave();
     bool isFinished() const;
